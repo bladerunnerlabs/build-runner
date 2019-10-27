@@ -1,0 +1,4 @@
+DEST: next
+PACK:
+- FILES: ALL
+  DEST: bin

@@ -1,0 +1,26 @@
+DEST: /opt/kuku
+PACK:
+
+- TAGS: bbx
+  FILES: "*[1-6].py"
+  DEST: py
+
+- TAGS: [ "bbx", "rgw" ]
+  FILES: "*.js" # regex supported, style?
+  DEST: js
+
+- DIR: scripts # one of the 2 ways to do nesting
+  TAGS: "xyz"
+  # DEST inherited from default, or from the parent
+  PACK:
+  - FILES: ["*.py", "*.txt"]
+
+- DIR: scripts
+  DEST: config # overrides the default
+  PACK:
+  - FILES: "*.xml"
+
+- TREE: abc
+  TAGS: xyz
+  DEST: abc
+  FILES: ALL

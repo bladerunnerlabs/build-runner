@@ -1,0 +1,98 @@
+# each PACK list item must be one of the following:
+# INCLUDE <name of yaml to include>
+# FILES <a list of file names or patterns, ALL, NONE> (attrs: DEST)
+# DIR <relative or abs path> (attrs: DEST, PACK - recursive)
+# TREE <relative or abs path> (attrs: DEST, FILES)
+
+# each yaml file (root or included) describes an implicit DIR entry
+# the default path is: .
+
+PACK:
+
+- INCLUDE: pack1.yaml # may be multiple INCLUDE per PACK
+- INCLUDE: next/pack2.yaml
+
+- FILES: "*[1-6].py"
+  DEST: py
+
+- FILES: "*.js" # regex supported, style?
+  DEST: js
+
+- DIR: scripts # one of the 2 ways to do nesting
+  # DEST inherited from default, or from the parent
+  PACK:
+  - FILES: ["*.py", "*.txt"]
+
+- DIR: scripts
+  DEST: config # overrides the default
+  PACK:
+  - FILES: "*.xml"
+
+# one of the 2 ways to do nesting - takes the entire directory as a subtree
+- TREE: abc
+  DEST: abc
+  FILES: ALL # but subject to the file pattern filter
+
+- DIR: oracle
+  DEST: oracle
+  PACK:
+  - FILES: oracle.xml
+    DEST: config
+
+  - INCLUDE: pack3.yaml
+
+  - DIR: daemons/srp_daemon
+    DEST: srp_daemon
+    # single PACK item can host a number of PACK items in its list,
+    # that's the way to have multiple PACKs in one directory
+    PACK:
+    - FILES: [srp_daemon.c, srp_handle_traps.c]
+      DEST: sources
+
+    - FILES: daemon.cfg
+
+    - TREE: pyscripts
+      DEST: py
+      FILES:
+      - '*s1.py'
+      - '*.txt'
+
+    - FILES:
+      - Readme.md
+      - system.xml
+
+    - TREE: setup
+      DEST: scripts
+      FILES: ["*.py", "ps1.ps1.txt"]
+
+    - DIR: config
+      DEST: config
+      PACK:
+      - FILES: "*.cfg"
+
+    - DIR: iscsi
+      DEST: daemon/iscsi
+      PACK:
+      - FILES:
+        - io.c
+        - ioctl.c
+        - md5.c
+
+- DIR: install
+  DEST: opt/bin
+  PACK:
+  - INCLUDE: install.yaml
+
+  - DIR: core
+    DEST: hello/core
+    PACK:
+    - FILES: '*'
+
+  - DIR: bin
+    DEST: serv
+    PACK:
+    - FILES: 'serv-key*'
+
+  - DIR: bin
+    PACK:
+    - FILES: "exit*"

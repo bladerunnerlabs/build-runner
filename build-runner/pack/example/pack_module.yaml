@@ -1,0 +1,14 @@
+# each PACK list item must be one of the following:
+# INCLUDE <name of yaml to include>
+# FILES <a list of file names or patterns, ALL, NONE> (attrs: DEST)
+# DIR <relative or abs path> (attrs: DEST, PACK - recursive)
+# TREE <relative or abs path> (attrs: DEST, FILES)
+
+# each yaml file (root or included) describes an implicit DIR entry
+# the default path is: .
+
+DEST: /opt/example
+
+PACK:
+- INCLUDE: module/pack_main.yaml
+
