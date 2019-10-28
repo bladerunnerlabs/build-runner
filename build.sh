@@ -114,6 +114,9 @@ function usage()
     echo -e "${BLUE}-r | --release-dir [dir]${NORM}: tar.gz release dir [${DEF_RELEASE_DIR}]"
     echo
     echo -e "${BLUE}-t | --target [name]${NORM}: target name passed to make [${DEF_MAKE_TARGET}]"
+    echo -e "${BLUE}-C | --clean${NORM}: remove both the build and install dirs"
+    echo -e "   module or app-specific removal unsupported yet"
+    echo -e "   for regular makefile-based clean use: --target clean"
     echo -e "${BLUE}-c | --config ${NORM}: build configuration, [${DEF_CONFIG}]"
     echo -e "   values: ${BLUE}Release, Debug${NORM}"
     echo -e "${BLUE}-T | --tree ${NORM}: single tree build mode, [off]"
@@ -129,8 +132,8 @@ function usage()
 function parse_args()
 {
     options=$(getopt \
-        -o "a:m:u:d:B:R:MPUb:i:r:t:c:TSDVh" \
-        -l "app:,module:,seed-url:,seed-dir:,seed-branch:,seed-remote:,make,pack,ut,build-dir:,install-dir:,release-dir:,target:,config:,tree,shared,dry,verbose,help" \
+        -o "a:m:u:d:B:R:MPUb:i:r:t:c:CTSDVh" \
+        -l "app:,module:,seed-url:,seed-dir:,seed-branch:,seed-remote:,make,pack,ut,build-dir:,install-dir:,release-dir:,target:,config:,clean,tree,shared,dry,verbose,help" \
         -- "$@")
     if [ $? -ne 0 ]; then
         msg_red "${SCRIPT_NAME}: failed to parse arguments\n"
@@ -166,6 +169,7 @@ function parse_args()
 
             -t|--target) CMD_MAKE_TARGET=$2; shift; ;;
             -c|--config) CMD_CONFIG=$2; shift; ;;
+            -C|--clean) CMD_CLEAN=true; OPS_LIST="${OPS_LIST}clean "; ;;
             -T|--tree) CMD_SINGLE_TREE=true; ;;
             -S|--shared) SHARED=true; ;;
             -D|--dry) DRY_RUN=true; ;;
@@ -677,6 +681,15 @@ elif [[ "${CMD_OP_GIT_SEED_DIR}" == true ]]; then
     [[ -n "${CMD_GIT_REMOTE}" ]] && GIT_REMOTE_ARG="-n ${CMD_GIT_REMOTE}"
     export BUILD_ROOT
     ${GIT_PULL_SH} -d ${CMD_SEED_DIR} -b ${CMD_GIT_BRANCH} ${GIT_REMOTE_ARG} --pull || exit_build 1
+fi
+
+# perform total clean step if requested
+if [[ "${CMD_CLEAN}" == true ]]; then
+    msg_yellow "\nTotal clean"
+    msg_blue "Remove ${INSTALL_DIR}"
+    rm -rf ${INSTALL_DIR}
+    msg_blue "Remove ${BUILD_DIR}"
+    rm -rf ${BUILD_DIR}
 fi
 
 # perform build step if requested
