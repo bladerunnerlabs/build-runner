@@ -607,7 +607,8 @@ while IFS=' ,|' read -a cols; do
         eval "fetch_url=${cols[1]}"
         eval "fetch_branch=${cols[2]}"
         eval "fetch_dir=${cols[3]}"
-        fetch_dir=`readlink -e ${fetch_dir}`
+        echo "[${fetch_dir}]"
+        fetch_dir=`readlink -f ${fetch_dir}`
 
         summary=
         summary="${summary}line:${YELLOW}${line_num}${NORM} "
