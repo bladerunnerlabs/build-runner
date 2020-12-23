@@ -28,6 +28,6 @@ endif()
 if (NOT _LINKER_CMAKE_INCLUDED)
 set(_LINKER_CMAKE_INCLUDED YES)
 
-set(CMAKE_EXE_LINKER_FLAGS_RELEASE  -Wl,--enable-auto-import)
+#set(CMAKE_EXE_LINKER_FLAGS_RELEASE  -Wl,--enable-auto-import)
 
 endif(NOT _LINKER_CMAKE_INCLUDED)
