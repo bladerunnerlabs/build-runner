@@ -311,8 +311,9 @@ endfunction() # define_utest
 
 function(define_batch batch_name)
     # parse arguments
+    set(args_options UTEST)
     set(args_single INSTALL_DIR)
-    set(args_multi FILES)
+    set(args_multi FILES EXEC_FILES)
 
     cmake_parse_arguments("BATCH" "${args_options}" "${args_single}" "${args_multi}" ${ARGN})
 
@@ -327,6 +328,26 @@ function(define_batch batch_name)
     install(FILES ${BATCH_FILES}
         DESTINATION ${PACKAGE_INSTALL_PREFIX}/${BATCH_INSTALL_DIR}
     )
+
+    install(FILES ${BATCH_EXEC_FILES}
+        PERMISSIONS OWNER_EXECUTE OWNER_READ
+        DESTINATION ${PACKAGE_INSTALL_PREFIX}/${BATCH_INSTALL_DIR}
+    )
+
+    if(NOT BATCH_UTEST)
+        msg_green("Added FILES BATCH: ${PROJECT_NAME}")
+    else()
+        msg_green("Added UNIT TEST SCRIPT FILES: ${PROJECT_NAME}")
+    endif()
 endfunction() # define_batch
+
+function(define_utest_script script_name)
+    define_batch(
+        ${ARGV}
+        UTEST
+        INSTALL_DIR
+            utest
+    )
+endfunction() # define_utest_script
 
 endif (NOT _TARGETS_CMAKE_INCLUDED)
